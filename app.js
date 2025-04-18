@@ -60,6 +60,12 @@ app.use('/query', queryRoutes);
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
+  socket.on("send_message", (message) => {
+    // Broadcast message to the receiver
+    io.emit("receive_message", message);
+  });
+
+
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
