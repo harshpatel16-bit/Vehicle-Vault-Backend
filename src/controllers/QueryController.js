@@ -22,4 +22,25 @@ const postQuery = async (req, res) => {
     }
   };
 
-  module.exports={getAllQueries,postQuery};
+
+
+  const deleteQueryById = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deletedQuery = await Query.findByIdAndDelete(id);
+  
+      if (!deletedQuery) {
+        return res.status(404).json({ success: false, message: 'Query not found' });
+      }
+  
+      res.status(200).json({ success: true, message: 'Query deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+  };
+
+
+
+
+
+  module.exports={getAllQueries,postQuery,deleteQueryById};
