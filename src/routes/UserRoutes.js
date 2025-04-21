@@ -8,5 +8,8 @@ routes.delete("/user/:id",userController.deleteUserById)
 routes.post("/user/login",userController.loginUser)  
 routes.post("/user/forgotpassword",userController.forgotPassword)
 routes.post("/user/resetpassword",userController.resetpassword)
+routes.put("/wishlist/:userId",userController.addToWishlist)
+routes.delete("/removewishlist/:userId/:carId",userController.removeCarFromWishlist)
+
 
 module.exports = routes

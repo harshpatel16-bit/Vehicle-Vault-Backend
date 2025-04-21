@@ -135,6 +135,62 @@ const forgotPassword = async (req, res) => {
 
 
 
+  //wishlist api 
+
+const addToWishlist = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { carId } = req.body;
+
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { $addToSet: { wishlist: carId } }, // use $push if you want to allow duplicates
+      { new: true }
+    );
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    } else {
+      res.status(200).json({
+        message: "Car added to wishlist successfully",
+        data: user,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+// Remove a car from the user's wishlist
+const removeCarFromWishlist = async (req, res) => {
+  const { userId, carId } = req.params;
+
+  try {
+    const user = await userModel.findById(userId);
+    if (!user)
+      return res.status(404).json({ success: false, message: "User not found" });
+
+    // Filter out the carId from wishlist
+    user.wishlist = user.wishlist.filter((id) => id.toString() !== carId);
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Car removed from wishlist",
+      wishlist: user.wishlist,
+    });
+  } catch (err) {
+    console.error("Error removing wishlist car:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+
+
 
 
 
@@ -153,5 +209,7 @@ module.exports = {
     signup,
     loginUser,
     forgotPassword,
-    resetpassword
+    resetpassword,
+    addToWishlist,
+    removeCarFromWishlist
 };

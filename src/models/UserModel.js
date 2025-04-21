@@ -16,7 +16,13 @@ const userSchema = new Schema({
     email:{
         type:String,
         unique:true
-    }
+    },
+    wishlist: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "car" 
+        }
+    ]
 
 })
 
