@@ -6,9 +6,9 @@ const uploadFileToCloudinary = async (file) => {
 
     //conif
         cloudinary.config({
-        cloud_name:"dkgkunrvz",
-        api_key:"154278618583792",
-        api_secret:"ogX0Rp2u_stkZtqLrmxTGXgNZ-s"
+        cloud_name:"",
+        api_key:"",
+        api_secret:""
     })
 
     const cloudinaryResponse = await cloudinary.uploader.upload(file.path);
