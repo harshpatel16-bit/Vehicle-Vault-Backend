@@ -38,7 +38,6 @@ const signup = async (req, res) => {
         const hashedPassword =bcrypt.hashSync(req.body.password, salt);
         req.body.password = hashedPassword;
         const createUser = await userModel.create(req.body);
-        await mailUtil.sendingMail(createUser.email,"Welcome To Vehicle Vault","This Is Welcome Mail")
         res.status(201).json({
             message:"user created..",
             data: createUser,
