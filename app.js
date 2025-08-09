@@ -8,85 +8,57 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // Create HTTP server
+const server = http.createServer(app); // HTTP + Socket.IO server
 
+// Middleware
 app.use(express.json());
 app.use(cors({
-  origin: "https://vehicle-vault-frontend.vercel.app", 
+  origin: "https://vehicle-vault-frontend.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true
-})); 
+}));
 
- // Create server for socket.io
-const io = new Server (server, {
-    cors: {
-        origin: "https://vehicle-vault-frontend.vercel.app", // Adjust as needed for your frontend
-        methods: ["GET", "POST","PUT","DELETE", "PATCH"]
-    }
+// Socket.IO setup
+const io = new Server(server, {
+  cors: {
+    origin: "https://vehicle-vault-frontend.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+  }
 });
 
+// Routes
 app.get("/", (req, res) => {
   res.send("Socket.IO server is running...");
 });
 
-app.use(cors())
+app.use(require("./src/routes/RoleRoutes"));
+app.use(require("./src/routes/UserRoutes"));
+app.use("/state", require("./src/routes/StateRoutes"));
+app.use("/city", require("./src/routes/CityRoutes"));
+app.use("/area", require("./src/routes/AreaRoutes"));
+app.use("/car", require("./src/routes/CarRoutes"));
+app.use("/message", require("./src/routes/MessageRoutes"));
+app.use("/query", require("./src/routes/QueryRoutes"));
 
-const roleRoutes = require("./src/routes/RoleRoutes")
-app.use(roleRoutes)
-
-const userRoutes = require("./src/routes/UserRoutes")
-app.use(userRoutes)
-
-const stateRoutes = require("./src/routes/StateRoutes")
-app.use("/state",stateRoutes)       //http://localhost:3011/state/
-
-
-const cityRoutes = require("./src/routes/CityRoutes")
-app.use("/city",cityRoutes) //http://localhost:3011/city/
-
-
-const areaRoutes = require("./src/routes/AreaRoutes")
-app.use("/area",areaRoutes) //http://localhost:3011/area/
-
-
-const carRoutes = require("./src/routes/CarRoutes")
-app.use("/car",carRoutes)  //http://localhost:3011/car/
-
-
-const messageRoutes = require("./src/routes/MessageRoutes");
-app.use("/message", messageRoutes);
-
-const queryRoutes = require('./src/routes/QueryRoutes'); // path might vary
-app.use('/query', queryRoutes); 
-
-
-// Socket.IO Connection Handling
+// Socket.IO connection handling
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
   socket.on("send_message", (message) => {
-    // Broadcast message to the receiver
     io.emit("receive_message", message);
   });
-
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
 
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("Database connected..."))
+  .catch(err => console.error("MongoDB connection error:", err));
 
-// Expose Socket.io to use in other files
-// app.set("io", io);
-
-
-
-
-
-mongoose.connect(process.env.MONGO_URI).then(()=>{
-    console.log("database connected....")
-})
-
-
-app.listen(process.env.PORT,()=>{
-  console.log(`Server Started On Port:${process.env.PORT}`);
+// Start server with Socket.IO
+server.listen(process.env.PORT, () => {
+  console.log(`Server Started On Port: ${process.env.PORT}`);
 });
