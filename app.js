@@ -87,7 +87,6 @@ mongoose.connect(process.env.MONGO_URI).then(()=>{
 })
 
 
-server.listen(process.env.PORT,()=>{
-    console.log("server started on port number ",process.env.PORT)
-    
-})
+app.listen(process.env.PORT,()=>{
+  console.log(`Server Started On Port:${process.env.PORT}`);
+});

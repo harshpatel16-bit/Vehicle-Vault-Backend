@@ -5,12 +5,21 @@ const cloudinaryUtil = require("../utils/CloudinaryUtil");
 
 //storage engine
 
-const storage = multer.diskStorage({
-  destination: "./uploads",
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+const storage = multer.memoryStorage();
+const uploadFileBufferToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "cars" },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+};
+
+
 
 //multer object
 
@@ -68,8 +77,12 @@ const addCarWithFile = async (req, res) => {
       // database data store
       //cloundinary
 
-      const cloundinaryResponse = await cloudinaryUtil.uploadFileToCloudinary(
-        req.file
+      if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const cloundinaryResponse = await cloudinaryUtil.uploadFileBufferToCloudinary(
+        req.file.buffer
       );
       console.log(cloundinaryResponse);
       console.log(req.body);

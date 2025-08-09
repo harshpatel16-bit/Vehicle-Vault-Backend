@@ -34,6 +34,7 @@ const loginUser = async (req,res) => {
 
 const signup = async (req, res) => {
     try {
+        console.log(req.body);
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword =bcrypt.hashSync(req.body.password, salt);
         req.body.password = hashedPassword;
