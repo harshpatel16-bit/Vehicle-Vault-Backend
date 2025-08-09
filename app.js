@@ -20,7 +20,7 @@ app.use(cors({
 const io = new Server (server, {
     cors: {
         origin: "https://vehicle-vault-frontend.vercel.app", // Adjust as needed for your frontend
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST","PUT","DELETE", "PATCH"]
     }
 });
 
