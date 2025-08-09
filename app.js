@@ -12,14 +12,14 @@ const server = http.createServer(app); // Create HTTP server
 
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: "https://vehicle-vault-frontend.vercel.app", 
   credentials: true
 })); 
 
  // Create server for socket.io
 const io = new Server (server, {
     cors: {
-        origin: "http://localhost:5173", // Adjust as needed for your frontend
+        origin: "https://vehicle-vault-frontend.vercel.app", // Adjust as needed for your frontend
         methods: ["GET", "POST"]
     }
 });
